@@ -3,4 +3,6 @@
     <string name="page_title">CodeYard</string>
     <string name="search">search</string>
     <string name="content_description_search">search_description</string>
+    <string name="fab_content_desc">add</string>
+    <string name="add">add</string>
 </resources>
