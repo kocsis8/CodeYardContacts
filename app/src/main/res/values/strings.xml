@@ -5,4 +5,8 @@
     <string name="content_description_search">search_description</string>
     <string name="fab_content_desc">add</string>
     <string name="add">add</string>
+    <string name="kep">kep</string>
+    <string name="email">email</string>
+    <string name="name">Name</string>
+    <string name="phone">Phone</string>
 </resources>

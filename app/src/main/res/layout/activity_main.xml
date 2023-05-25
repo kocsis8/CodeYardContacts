@@ -49,4 +49,11 @@
         app:layout_constraintVertical_bias="0.974"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Button.Circle" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

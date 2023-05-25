@@ -8,6 +8,7 @@
         android:icon="@drawable/baseline_search_24"
         android:title="@string/search"
         android:contentDescription="@string/content_description_search"
+        app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom" />
 
 

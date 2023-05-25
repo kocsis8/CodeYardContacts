@@ -4,8 +4,11 @@ import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +19,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
@@ -35,18 +43,72 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     // firestore elérése
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    // contact listázásnézet
+   private RecyclerView mRecyclerView;
+   private ArrayList<Contact> mContactList;
+   private ContactsItemAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // recycle view
+        mRecyclerView = findViewById(R.id.recyclerView);
+        // Set the Layout Manager.
+        mRecyclerView.setLayoutManager(new GridLayoutManager(
+                this, 1));
+        // Initialize the ArrayList that will contain the data.
+        mContactList = new ArrayList<>();
+        // Initialize the adapter and set it to the RecyclerView.
+        mAdapter = new ContactsItemAdapter(this, mContactList);
+        mRecyclerView.setAdapter(mAdapter);
+
+        initContactsList();
+    }
+
+    private void initContactsList() {
+        mContactList.clear();
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("contacts");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Adatok lekérdezése és feldolgozása
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Minden egyes gyermek elem feldolgozása
+
+                    String name = snapshot.child("name").getValue(String.class);
+                    String email =  snapshot.child("email").getValue(String.class);
+                    String address =  snapshot.child("address").getValue(String.class);
+                    String phoneNumber = snapshot.child("phoneNumber").getValue(String.class);
+                    String imageURL =  snapshot.child("imageURL").getValue(String.class);
+                    mContactList.add( new Contact(name,email,address,phoneNumber,imageURL));
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Hiba esetén kezeld a hibát itt
+            }
+        });
+
+
+
+        // Notify the adapter of the change.
+        mAdapter.notifyDataSetChanged();
 
     }
 
-//plusz gomb event
+
+
+    //plusz gomb event
     public void addContact(View view) {
         generateContact();
 
@@ -70,12 +132,12 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-
+    // egyszerü cb alakítás miatti interface
     public interface RandomUserCallback {
         void onContactLoaded(Contact contact);
     }
 
-
+    // kontakt generálásárt felel ö futatja le az aszinkron task osztályt
     private void generateContact() {
 
         RandomUserAsyncTask task = new RandomUserAsyncTask(new RandomUserCallback() {
@@ -88,11 +150,11 @@ public class MainActivity extends AppCompatActivity {
         });
         task.execute();
     }
-
+    // event et figyeli és köldi tovább a kész kontakt objektumot
     private void handleContact(Contact contact) {
       addFirebase(contact);
     }
-// async osztály randomuser.me hez
+    // async osztály randomuser.me hez
     public class RandomUserAsyncTask extends AsyncTask<Void, Void, Contact> {
         private static final String API_URL = "https://randomuser.me/api/";
         private RandomUserCallback callback;
@@ -154,9 +216,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
 
 }
 
