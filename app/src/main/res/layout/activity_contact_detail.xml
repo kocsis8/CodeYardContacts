@@ -14,9 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:padding="50dp"
-        android:src=""
+        android:src="@mipmap/ic_launcher_round"
         app:tint="@color/white"
-        tools:ignore="ContentDescription" />
+
+       />
 
     <!--text view for displaying user name-->
     <TextView

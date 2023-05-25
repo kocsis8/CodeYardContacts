@@ -17,8 +17,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.auth.User;
 
 import org.json.JSONArray;
@@ -60,49 +64,61 @@ public class MainActivity extends AppCompatActivity {
 
         // recycle view
         mRecyclerView = findViewById(R.id.recyclerView);
+
         // Set the Layout Manager.
         mRecyclerView.setLayoutManager(new GridLayoutManager(
                 this, 1));
         // Initialize the ArrayList that will contain the data.
-        mContactList = new ArrayList<>();
+        mContactList = new ArrayList<Contact>();
         // Initialize the adapter and set it to the RecyclerView.
         mAdapter = new ContactsItemAdapter(this, mContactList);
+
         mRecyclerView.setAdapter(mAdapter);
 
         initContactsList();
+
     }
 
+    //lista betöltése
     private void initContactsList() {
         mContactList.clear();
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("contacts");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Adatok lekérdezése és feldolgozása
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Minden egyes gyermek elem feldolgozása
+        db.collection("contacts")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
 
-                    String name = snapshot.child("name").getValue(String.class);
-                    String email =  snapshot.child("email").getValue(String.class);
-                    String address =  snapshot.child("address").getValue(String.class);
-                    String phoneNumber = snapshot.child("phoneNumber").getValue(String.class);
-                    String imageURL =  snapshot.child("imageURL").getValue(String.class);
-                    mContactList.add( new Contact(name,email,address,phoneNumber,imageURL));
+                                String name = document.getString("name");
+                                String email =  document.getString("email");
+                                String address =  document.getString("address");
+                                String phoneNumber = document.getString("phoneNumber");
+                                String imageURL =  document.getString("imageURL");
+                                Contact c = new Contact(name,email,address,phoneNumber,imageURL);
 
-                }
-            }
+                                mContactList.add(c);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Hiba esetén kezeld a hibát itt
-            }
-        });
+                            }
+
+                            mAdapter.notifyDataSetChanged();
+
+                        } else {
+                            Log.d(TAG, "Hiba történt a Firestore adatok lekérdezése közben: ", task.getException());
+                        }
+                    }
+
+                });
 
 
 
         // Notify the adapter of the change.
-        mAdapter.notifyDataSetChanged();
+
+
+
+        Log.d(TAG, "arraylist3: "+ mContactList);
+
 
     }
 
@@ -153,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
     // event et figyeli és köldi tovább a kész kontakt objektumot
     private void handleContact(Contact contact) {
       addFirebase(contact);
+      initContactsList();
     }
     // async osztály randomuser.me hez
     public class RandomUserAsyncTask extends AsyncTask<Void, Void, Contact> {

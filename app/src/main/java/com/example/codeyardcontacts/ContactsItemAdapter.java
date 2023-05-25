@@ -1,18 +1,25 @@
 package com.example.codeyardcontacts;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -55,7 +62,7 @@ public class ContactsItemAdapter extends RecyclerView.Adapter<ContactsItemAdapte
                 i.putExtra("phoneNumber", currentItem.getPhoneNumber());
                 i.putExtra("imgURL", currentItem.getImageURL());
 
-
+                Toast.makeText(mContext, "kaiitintva: "+currentItem.getName(), Toast.LENGTH_SHORT).show();
                 // át irányítás új aktivitire,
                 mContext.startActivity(i);
             }
@@ -94,6 +101,7 @@ public class ContactsItemAdapter extends RecyclerView.Adapter<ContactsItemAdapte
             return results;
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             mContactItemData = (ArrayList)filterResults.values;
@@ -115,9 +123,10 @@ public class ContactsItemAdapter extends RecyclerView.Adapter<ContactsItemAdapte
             super(itemView);
 
             // nézet init.
-            mNameText = itemView.findViewById(R.id.nameTextView);
+            mNameText = itemView.findViewById(R.id.textviewName);
             mAddressText = itemView.findViewById(R.id.textviewAddress);
             mEmailText = itemView.findViewById(R.id.textviewEmail);
+            mImage = itemView.findViewById(R.id.circleImageView);
 
         }
 
@@ -127,7 +136,10 @@ public class ContactsItemAdapter extends RecyclerView.Adapter<ContactsItemAdapte
             mEmailText.setText(currentItem.getEmail());
 
             // kep betöltése.
-            Glide.with(mContext).load(currentItem.getImageURL()).into(mImage);
+            Picasso.get()
+                    .load(currentItem.getImageURL())
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .into(mImage);
         }
     }
 }
