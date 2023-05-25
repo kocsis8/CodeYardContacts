@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                                 mContactList.add(c);
 
                             }
-
+                            //lista fissítés
                             mAdapter.notifyDataSetChanged();
 
                         } else {
@@ -101,16 +101,6 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 });
-
-
-
-        // Notify the adapter of the change.
-
-
-
-        Log.d(TAG, "arraylist3: "+ mContactList);
-
-
     }
 
 
@@ -232,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.top_app_bar, menu);
         MenuItem menuItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        Log.d(TAG, "keres: "+searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -240,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
+                Log.d(TAG, s);
                 mAdapter.getFilter().filter(s);
                 return false;
             }
