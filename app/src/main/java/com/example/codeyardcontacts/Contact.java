@@ -1,6 +1,6 @@
 package com.example.codeyardcontacts;
 
-import java.util.ArrayList;
+// kontaktot reprezentáló osztály
 
 public class Contact {
     private String name;

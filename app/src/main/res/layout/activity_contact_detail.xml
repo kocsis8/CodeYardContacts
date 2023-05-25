@@ -13,11 +13,10 @@
         android:id="@+id/idIVContact"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:contentDescription="@string/kep"
         android:padding="50dp"
         android:src="@mipmap/ic_launcher_round"
-        app:tint="@color/white"
-
-       />
+        tools:ignore="ImageContrastCheck" />
 
     <!--text view for displaying user name-->
     <TextView
@@ -27,10 +26,10 @@
         android:layout_below="@id/idIVContact"
         android:padding="8dp"
         android:text="@string/name"
-        android:textColor="#8D6E63"
+        android:textColor="#000000"
         android:textSize="18sp" />
 
-    <!--cardview for displaying user contact-->
+
     <androidx.cardview.widget.CardView
         android:id="@+id/phoneCV"
         android:layout_width="match_parent"
@@ -68,7 +67,7 @@
                 android:layout_toEndOf="@id/idIVCall"
                 android:text="@string/phone" />
 
-            <!--image view for displaying message icon-->
+
             <ImageView
                 android:id="@+id/idIVMessage"
                 android:layout_width="40dp"
